@@ -3,8 +3,6 @@ import './AuthPage.scss';
 import { BrowserRouter, Switch, Route, Link } from 'react-router-dom';
 import axios from 'axios';
 
-
-
 const AuthPage = () => {
   const [form, setForm] = useState({
     email: '',
@@ -12,19 +10,21 @@ const AuthPage = () => {
   });
 
   const changeHandler = (event) => {
-    
     setForm({ ...form, [event.target.name]: event.target.value });
-
-    console.log('form: ', form);
   };
 
   const registerHandler = async () => {
     try {
-      await axios.post('/api/auth/registration', { ...form }, {
+      await axios
+        .post(
+          '/api/auth/registration',
+          { ...form },
+          {
             headers: {
               'Content-Type': 'application/json',
-            }
-          })
+            },
+          },
+        )
         .then((response) => console.log(response));
     } catch (error) {
       console.log(error);
