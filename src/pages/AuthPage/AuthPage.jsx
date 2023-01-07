@@ -1,13 +1,16 @@
-import React, { useState } from 'react';
+import React, { useState, useContext } from 'react';
 import './AuthPage.scss';
 import { BrowserRouter, Switch, Route, Link } from 'react-router-dom';
 import axios from 'axios';
+import { AuthContext } from '../../context/AuthContext';
 
 const AuthPage = () => {
   const [form, setForm] = useState({
     email: '',
     password: '',
   });
+
+  const { login } = useContext(AuthContext);
 
   const changeHandler = (event) => {
     setForm({ ...form, [event.target.name]: event.target.value });
@@ -30,6 +33,27 @@ const AuthPage = () => {
       console.log(error);
     }
   };
+
+  const loginHandler = async () => {
+    try {
+      await axios
+        .post(
+          '/api/auth/login',
+          { ...form },
+          {
+            headers: {
+              'Content-Type': 'application/json',
+            },
+          },
+        )
+        .then((response) => {
+          login(response.data.token, response.data.userId);
+        });
+    } catch (error) {
+      console.log('error: ', error);
+    }
+  };
+
   return (
     <BrowserRouter>
       <Switch>
@@ -60,7 +84,9 @@ const AuthPage = () => {
                     </div>
                   </div>
                   <div className="row">
-                    <button className="wawes-effect wawes-light btn blue">Войти</button>
+                    <button className="wawes-effect wawes-light btn blue" onClick={loginHandler}>
+                      Войти
+                    </button>
                     <Link className="btn-outline btn-reg" to="/registration">
                       Нет аккаунта ?
                     </Link>
